@@ -37,7 +37,14 @@ export async function listServices(businessId: string): Promise<Service[]> {
   return (data ?? []) as unknown as Service[];
 }
 
-export async function upsertService(service: Partial<Service> & { business_id: string }) {
+export async function upsertService(service: {
+  id?: string;
+  business_id: string;
+  name: string;
+  price: number;
+  duration_min: number;
+  description?: string;
+}) {
   const payload = {
     business_id: service.business_id,
     name: service.name,
