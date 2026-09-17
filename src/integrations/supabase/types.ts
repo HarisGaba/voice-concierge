@@ -14,7 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          business_id: string
+          created_at: string
+          customer_id: string | null
+          end_time: string
+          id: string
+          notes: string
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          service_id: string | null
+          start_time: string
+          status: Database["public"]["Enums"]["appointment_status"]
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          customer_id?: string | null
+          end_time: string
+          id?: string
+          notes?: string
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          service_id?: string | null
+          start_time: string
+          status?: Database["public"]["Enums"]["appointment_status"]
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          customer_id?: string | null
+          end_time?: string
+          id?: string
+          notes?: string
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          service_id?: string | null
+          start_time?: string
+          status?: Database["public"]["Enums"]["appointment_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          address: string
+          business_hours: Json
+          created_at: string
+          email: string
+          id: string
+          name: string
+          phone: string
+        }
+        Insert: {
+          address?: string
+          business_hours?: Json
+          created_at?: string
+          email?: string
+          id?: string
+          name: string
+          phone?: string
+        }
+        Update: {
+          address?: string
+          business_hours?: Json
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string
+          pending_balance: number
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string
+          pending_balance?: number
+          phone: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string
+          pending_balance?: number
+          phone?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          business_id: string
+          created_at: string
+          description: string
+          duration_min: number
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          description?: string
+          duration_min?: number
+          id?: string
+          name: string
+          price?: number
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          description?: string
+          duration_min?: number
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +178,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      appointment_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED"
+      payment_status: "PAID" | "UNPAID" | "PARTIAL"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +306,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      appointment_status: ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"],
+      payment_status: ["PAID", "UNPAID", "PARTIAL"],
+    },
   },
 } as const
