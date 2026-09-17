@@ -198,7 +198,7 @@ export const Route = createFileRoute("/api/public/vapi/webhook")({
         return json({
           available: true,
           booked: true,
-          result: `Your appointment for ${service.name} is confirmed for ${speakTime(start)}. That's $${service.price}, and it takes about ${service.durationMin ?? service.duration_min} minutes.`,
+          result: `Your appointment for ${service.name} is confirmed for ${speakTime(start)}. That's $${service.price}, and it takes about ${service.duration_min} minutes.`,
           appointment: {
             service: service.name,
             price: service.price,
