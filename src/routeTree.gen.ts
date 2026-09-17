@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiBookingsRouteImport } from './routes/api/bookings'
 import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
 import { Route as ApiPublicWhatsappSendReminderRouteImport } from './routes/api/public/whatsapp/send-reminder'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBookingsRoute = ApiBookingsRouteImport.update({
+  id: '/api/bookings',
+  path: '/api/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicVapiWebhookRoute = ApiPublicVapiWebhookRouteImport.update({
@@ -32,35 +38,47 @@ const ApiPublicWhatsappSendReminderRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/bookings': typeof ApiBookingsRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/bookings': typeof ApiBookingsRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/bookings': typeof ApiBookingsRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/api/public/vapi/webhook' | '/api/public/whatsapp/send-reminder'
+    | '/'
+    | '/api/bookings'
+    | '/api/public/vapi/webhook'
+    | '/api/public/whatsapp/send-reminder'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/vapi/webhook' | '/api/public/whatsapp/send-reminder'
+  to:
+    | '/'
+    | '/api/bookings'
+    | '/api/public/vapi/webhook'
+    | '/api/public/whatsapp/send-reminder'
   id:
     | '__root__'
     | '/'
+    | '/api/bookings'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiBookingsRoute: typeof ApiBookingsRoute
   ApiPublicVapiWebhookRoute: typeof ApiPublicVapiWebhookRoute
   ApiPublicWhatsappSendReminderRoute: typeof ApiPublicWhatsappSendReminderRoute
 }
@@ -72,6 +90,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/bookings': {
+      id: '/api/bookings'
+      path: '/api/bookings'
+      fullPath: '/api/bookings'
+      preLoaderRoute: typeof ApiBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/vapi/webhook': {
@@ -93,6 +118,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiBookingsRoute: ApiBookingsRoute,
   ApiPublicVapiWebhookRoute: ApiPublicVapiWebhookRoute,
   ApiPublicWhatsappSendReminderRoute: ApiPublicWhatsappSendReminderRoute,
 }
