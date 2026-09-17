@@ -10,33 +10,90 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ApiBookingsRouteImport } from './routes/api/bookings'
+import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
+import { Route as ApiPublicWhatsappSendReminderRouteImport } from './routes/api/public/whatsapp/send-reminder'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiBookingsRoute = ApiBookingsRouteImport.update({
+  id: '/api/bookings',
+  path: '/api/bookings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicVapiWebhookRoute = ApiPublicVapiWebhookRouteImport.update({
+  id: '/api/public/vapi/webhook',
+  path: '/api/public/vapi/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWhatsappSendReminderRoute =
+  ApiPublicWhatsappSendReminderRouteImport.update({
+    id: '/api/public/whatsapp/send-reminder',
+    path: '/api/public/whatsapp/send-reminder',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
+  '/api/bookings': typeof ApiBookingsRoute
+  '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
+  '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
+  '/api/bookings': typeof ApiBookingsRoute
+  '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
+  '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
+  '/api/bookings': typeof ApiBookingsRoute
+  '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
+  '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/api/bookings'
+    | '/api/public/vapi/webhook'
+    | '/api/public/whatsapp/send-reminder'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/api/bookings'
+    | '/api/public/vapi/webhook'
+    | '/api/public/whatsapp/send-reminder'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/api/bookings'
+    | '/api/public/vapi/webhook'
+    | '/api/public/whatsapp/send-reminder'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
+  ApiBookingsRoute: typeof ApiBookingsRoute
+  ApiPublicVapiWebhookRoute: typeof ApiPublicVapiWebhookRoute
+  ApiPublicWhatsappSendReminderRoute: typeof ApiPublicWhatsappSendReminderRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +105,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/bookings': {
+      id: '/api/bookings'
+      path: '/api/bookings'
+      fullPath: '/api/bookings'
+      preLoaderRoute: typeof ApiBookingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/vapi/webhook': {
+      id: '/api/public/vapi/webhook'
+      path: '/api/public/vapi/webhook'
+      fullPath: '/api/public/vapi/webhook'
+      preLoaderRoute: typeof ApiPublicVapiWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/whatsapp/send-reminder': {
+      id: '/api/public/whatsapp/send-reminder'
+      path: '/api/public/whatsapp/send-reminder'
+      fullPath: '/api/public/whatsapp/send-reminder'
+      preLoaderRoute: typeof ApiPublicWhatsappSendReminderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
+  ApiBookingsRoute: ApiBookingsRoute,
+  ApiPublicVapiWebhookRoute: ApiPublicVapiWebhookRoute,
+  ApiPublicWhatsappSendReminderRoute: ApiPublicWhatsappSendReminderRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
