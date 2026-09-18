@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ApiBookingsRouteImport } from './routes/api/bookings'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardCalendarRouteImport } from './routes/dashboard/calendar'
 import { Route as DashboardCustomersRouteImport } from './routes/dashboard/customers'
 import { Route as DashboardServicesRouteImport } from './routes/dashboard/services'
 import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
@@ -36,6 +37,11 @@ const ApiBookingsRoute = ApiBookingsRouteImport.update({
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCalendarRoute = DashboardCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardCustomersRoute = DashboardCustomersRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/api/bookings': typeof ApiBookingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/bookings': typeof ApiBookingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/api/bookings': typeof ApiBookingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/api/bookings'
+    | '/dashboard/calendar'
     | '/dashboard/customers'
     | '/dashboard/services'
     | '/dashboard/'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/api/bookings'
+    | '/dashboard/calendar'
     | '/dashboard/customers'
     | '/dashboard/services'
     | '/dashboard'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/api/bookings'
+    | '/dashboard/calendar'
     | '/dashboard/customers'
     | '/dashboard/services'
     | '/dashboard/'
@@ -160,6 +172,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/calendar': {
+      id: '/dashboard/calendar'
+      path: '/calendar'
+      fullPath: '/dashboard/calendar'
+      preLoaderRoute: typeof DashboardCalendarRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/customers': {
       id: '/dashboard/customers'
       path: '/customers'
@@ -192,12 +211,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteChildren {
+  DashboardCalendarRoute: typeof DashboardCalendarRoute
   DashboardCustomersRoute: typeof DashboardCustomersRoute
   DashboardServicesRoute: typeof DashboardServicesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCalendarRoute: DashboardCalendarRoute,
   DashboardCustomersRoute: DashboardCustomersRoute,
   DashboardServicesRoute: DashboardServicesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
