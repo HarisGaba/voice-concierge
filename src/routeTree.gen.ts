@@ -12,6 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ApiBookingsRouteImport } from './routes/api/bookings'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardCalendarRouteImport } from './routes/dashboard/calendar'
+import { Route as DashboardCustomersRouteImport } from './routes/dashboard/customers'
+import { Route as DashboardServicesRouteImport } from './routes/dashboard/services'
 import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
 import { Route as ApiPublicWhatsappSendReminderRouteImport } from './routes/api/public/whatsapp/send-reminder'
 
@@ -30,6 +34,26 @@ const ApiBookingsRoute = ApiBookingsRouteImport.update({
   path: '/api/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCalendarRoute = DashboardCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCustomersRoute = DashboardCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardServicesRoute = DashboardServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiPublicVapiWebhookRoute = ApiPublicVapiWebhookRouteImport.update({
   id: '/api/public/vapi/webhook',
   path: '/api/public/vapi/webhook',
@@ -44,23 +68,34 @@ const ApiPublicWhatsappSendReminderRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/api/bookings': typeof ApiBookingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
+  '/dashboard/customers': typeof DashboardCustomersRoute
+  '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/api/bookings': typeof ApiBookingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
+  '/dashboard/customers': typeof DashboardCustomersRoute
+  '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/api/bookings': typeof ApiBookingsRoute
+  '/dashboard/calendar': typeof DashboardCalendarRoute
+  '/dashboard/customers': typeof DashboardCustomersRoute
+  '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
@@ -70,13 +105,20 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/api/bookings'
+    | '/dashboard/calendar'
+    | '/dashboard/customers'
+    | '/dashboard/services'
+    | '/dashboard/'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
     | '/api/bookings'
+    | '/dashboard/calendar'
+    | '/dashboard/customers'
+    | '/dashboard/services'
+    | '/dashboard'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   id:
@@ -84,13 +126,17 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/api/bookings'
+    | '/dashboard/calendar'
+    | '/dashboard/customers'
+    | '/dashboard/services'
+    | '/dashboard/'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   ApiBookingsRoute: typeof ApiBookingsRoute
   ApiPublicVapiWebhookRoute: typeof ApiPublicVapiWebhookRoute
   ApiPublicWhatsappSendReminderRoute: typeof ApiPublicWhatsappSendReminderRoute
@@ -119,6 +165,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/calendar': {
+      id: '/dashboard/calendar'
+      path: '/calendar'
+      fullPath: '/dashboard/calendar'
+      preLoaderRoute: typeof DashboardCalendarRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/customers': {
+      id: '/dashboard/customers'
+      path: '/customers'
+      fullPath: '/dashboard/customers'
+      preLoaderRoute: typeof DashboardCustomersRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/services': {
+      id: '/dashboard/services'
+      path: '/services'
+      fullPath: '/dashboard/services'
+      preLoaderRoute: typeof DashboardServicesRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/public/vapi/webhook': {
       id: '/api/public/vapi/webhook'
       path: '/api/public/vapi/webhook'
@@ -136,9 +210,27 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardCalendarRoute: typeof DashboardCalendarRoute
+  DashboardCustomersRoute: typeof DashboardCustomersRoute
+  DashboardServicesRoute: typeof DashboardServicesRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCalendarRoute: DashboardCalendarRoute,
+  DashboardCustomersRoute: DashboardCustomersRoute,
+  DashboardServicesRoute: DashboardServicesRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   ApiBookingsRoute: ApiBookingsRoute,
   ApiPublicVapiWebhookRoute: ApiPublicVapiWebhookRoute,
   ApiPublicWhatsappSendReminderRoute: ApiPublicWhatsappSendReminderRoute,
