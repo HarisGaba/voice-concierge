@@ -16,6 +16,8 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardCalendarRouteImport } from './routes/dashboard/calendar'
 import { Route as DashboardCustomersRouteImport } from './routes/dashboard/customers'
 import { Route as DashboardServicesRouteImport } from './routes/dashboard/services'
+import { Route as ApiPublicSmsSendConfirmationRouteImport } from './routes/api/public/sms/send-confirmation'
+import { Route as ApiPublicTwilioInboundRouteImport } from './routes/api/public/twilio/inbound'
 import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
 import { Route as ApiPublicWhatsappSendReminderRouteImport } from './routes/api/public/whatsapp/send-reminder'
 
@@ -54,6 +56,17 @@ const DashboardServicesRoute = DashboardServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => DashboardRoute,
 } as any)
+const ApiPublicSmsSendConfirmationRoute =
+  ApiPublicSmsSendConfirmationRouteImport.update({
+    id: '/api/public/sms/send-confirmation',
+    path: '/api/public/sms/send-confirmation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicTwilioInboundRoute = ApiPublicTwilioInboundRouteImport.update({
+  id: '/api/public/twilio/inbound',
+  path: '/api/public/twilio/inbound',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicVapiWebhookRoute = ApiPublicVapiWebhookRouteImport.update({
   id: '/api/public/vapi/webhook',
   path: '/api/public/vapi/webhook',
@@ -74,6 +87,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
+  '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
@@ -84,6 +99,8 @@ export interface FileRoutesByTo {
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
+  '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
@@ -96,6 +113,8 @@ export interface FileRoutesById {
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
+  '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
   '/api/public/whatsapp/send-reminder': typeof ApiPublicWhatsappSendReminderRoute
 }
@@ -109,6 +128,8 @@ export interface FileRouteTypes {
     | '/dashboard/customers'
     | '/dashboard/services'
     | '/dashboard/'
+    | '/api/public/sms/send-confirmation'
+    | '/api/public/twilio/inbound'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   fileRoutesByTo: FileRoutesByTo
@@ -119,6 +140,8 @@ export interface FileRouteTypes {
     | '/dashboard/customers'
     | '/dashboard/services'
     | '/dashboard'
+    | '/api/public/sms/send-confirmation'
+    | '/api/public/twilio/inbound'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   id:
@@ -130,6 +153,8 @@ export interface FileRouteTypes {
     | '/dashboard/customers'
     | '/dashboard/services'
     | '/dashboard/'
+    | '/api/public/sms/send-confirmation'
+    | '/api/public/twilio/inbound'
     | '/api/public/vapi/webhook'
     | '/api/public/whatsapp/send-reminder'
   fileRoutesById: FileRoutesById
@@ -138,6 +163,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   ApiBookingsRoute: typeof ApiBookingsRoute
+  ApiPublicSmsSendConfirmationRoute: typeof ApiPublicSmsSendConfirmationRoute
+  ApiPublicTwilioInboundRoute: typeof ApiPublicTwilioInboundRoute
   ApiPublicVapiWebhookRoute: typeof ApiPublicVapiWebhookRoute
   ApiPublicWhatsappSendReminderRoute: typeof ApiPublicWhatsappSendReminderRoute
 }
@@ -193,6 +220,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardServicesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/api/public/sms/send-confirmation': {
+      id: '/api/public/sms/send-confirmation'
+      path: '/api/public/sms/send-confirmation'
+      fullPath: '/api/public/sms/send-confirmation'
+      preLoaderRoute: typeof ApiPublicSmsSendConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/twilio/inbound': {
+      id: '/api/public/twilio/inbound'
+      path: '/api/public/twilio/inbound'
+      fullPath: '/api/public/twilio/inbound'
+      preLoaderRoute: typeof ApiPublicTwilioInboundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/vapi/webhook': {
       id: '/api/public/vapi/webhook'
       path: '/api/public/vapi/webhook'
@@ -232,6 +273,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
   ApiBookingsRoute: ApiBookingsRoute,
+  ApiPublicSmsSendConfirmationRoute: ApiPublicSmsSendConfirmationRoute,
+  ApiPublicTwilioInboundRoute: ApiPublicTwilioInboundRoute,
   ApiPublicVapiWebhookRoute: ApiPublicVapiWebhookRoute,
   ApiPublicWhatsappSendReminderRoute: ApiPublicWhatsappSendReminderRoute,
 }

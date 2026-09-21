@@ -3,13 +3,16 @@
  *
  * POST /api/public/whatsapp/send-reminder  { appointmentId: string }
  *
- * If TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_WHATSAPP_FROM are set the
- * message is sent through Twilio; otherwise the payload is returned as a
- * simulated send so the flow can be demoed without credentials.
+ * Sends through Twilio (connector gateway or direct credentials). When
+ * TWILIO_WHATSAPP_CONTENT_SID points at an approved Content template with
+ * quick-reply buttons, the template is sent so CONFIRM / CANCEL render as real
+ * tappable buttons; otherwise the same choices are offered as text replies.
+ * Replies land on /api/public/twilio/inbound.
  */
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { buildConfirmationBody, formatWhen, sendTwilioMessage } from "@/lib/messaging.server";
 import { getServerClient, json } from "@/lib/voice.server";
 
 const bodySchema = z.object({ appointmentId: z.string().uuid() });
@@ -30,59 +33,46 @@ export const Route = createFileRoute("/api/public/whatsapp/send-reminder")({
         const db = getServerClient();
         const { data: appointment } = await db
           .from("appointments")
-          .select("*, customer:customers(name,phone), service:services(name,price)")
+          .select(
+            "*, customer:customers(name,phone), service:services(name,price), business:businesses(name)",
+          )
           .eq("id", parsed.data.appointmentId)
           .maybeSingle();
         if (!appointment) return json({ error: "Appointment not found" }, 404);
 
         const customer = appointment.customer as { name: string; phone: string } | null;
         const service = appointment.service as { name: string; price: number } | null;
-        const when = new Date(appointment.start_time).toLocaleString("en-US", {
-          weekday: "short",
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
+        const business = appointment.business as { name: string } | null;
+        if (!customer?.phone) return json({ error: "Customer has no phone number" }, 400);
+
+        const businessName = business?.name ?? "our shop";
+        const startTime = appointment.start_time as string;
+        const body = buildConfirmationBody({
+          businessName,
+          customerName: customer.name,
+          serviceName: service?.name ?? null,
+          price: service?.price ?? null,
+          startTime,
+          channel: "whatsapp",
         });
 
-        const body =
-          `Hi ${customer?.name ?? "there"}! Your ${service?.name ?? "appointment"} is booked for ${when}.\n` +
-          `Total: $${service?.price ?? 0}.\n\n` +
-          `Reply CONFIRM to lock it in, or CANCEL to release the slot.`;
-
-        const sid = process.env["TWILIO_ACCOUNT_SID"];
-        const token = process.env["TWILIO_AUTH_TOKEN"];
-        const from = process.env["TWILIO_WHATSAPP_FROM"];
-
-        if (!sid || !token || !from || !customer?.phone) {
-          return json({
-            sent: false,
-            simulated: true,
-            to: customer?.phone ?? null,
-            body,
-            actions: ["CONFIRM", "CANCEL"],
-          });
-        }
-
-        const form = new URLSearchParams({
-          To: `whatsapp:${customer.phone}`,
-          From: from,
-          Body: body,
+        const contentSid = process.env["TWILIO_WHATSAPP_CONTENT_SID"] ?? null;
+        const result = await sendTwilioMessage({
+          channel: "whatsapp",
+          to: customer.phone,
+          body,
+          contentSid,
+          contentVariables: contentSid
+            ? {
+                "1": customer.name,
+                "2": service?.name ?? "appointment",
+                "3": formatWhen(startTime),
+                "4": businessName,
+              }
+            : null,
         });
-        const res = await fetch(
-          `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Basic ${btoa(`${sid}:${token}`)}`,
-              "content-type": "application/x-www-form-urlencoded",
-            },
-            body: form,
-          },
-        );
-        const result = (await res.json()) as Record<string, unknown>;
-        if (!res.ok) return json({ sent: false, error: result }, 502);
-        return json({ sent: true, sid: result["sid"], to: customer.phone, body });
+
+        return json({ ...result, actions: ["CONFIRM", "CANCEL"] }, result.error ? 502 : 200);
       },
     },
   },
