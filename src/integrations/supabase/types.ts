@@ -170,6 +170,71 @@ export type Database = {
           },
         ]
       }
+      voice_settings: {
+        Row: {
+          agent_name: string
+          business_id: string
+          closing: string
+          created_at: string
+          greeting: string
+          id: string
+          language: string
+          last_synced_at: string | null
+          menu_intro: string
+          phone_number: string
+          retell_agent_id: string
+          send_sms: boolean
+          send_whatsapp: boolean
+          updated_at: string
+          vapi_assistant_id: string
+          voice_id: string
+        }
+        Insert: {
+          agent_name?: string
+          business_id: string
+          closing?: string
+          created_at?: string
+          greeting?: string
+          id?: string
+          language?: string
+          last_synced_at?: string | null
+          menu_intro?: string
+          phone_number?: string
+          retell_agent_id?: string
+          send_sms?: boolean
+          send_whatsapp?: boolean
+          updated_at?: string
+          vapi_assistant_id?: string
+          voice_id?: string
+        }
+        Update: {
+          agent_name?: string
+          business_id?: string
+          closing?: string
+          created_at?: string
+          greeting?: string
+          id?: string
+          language?: string
+          last_synced_at?: string | null
+          menu_intro?: string
+          phone_number?: string
+          retell_agent_id?: string
+          send_sms?: boolean
+          send_whatsapp?: boolean
+          updated_at?: string
+          vapi_assistant_id?: string
+          voice_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_settings_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
