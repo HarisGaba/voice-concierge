@@ -11,7 +11,26 @@ import type {
   Business,
   Customer,
   Service,
+  VoiceSettings,
 } from "./types";
+
+export async function getVoiceSettings(businessId: string): Promise<VoiceSettings | null> {
+  const { data, error } = await supabase
+    .from("voice_settings")
+    .select("*")
+    .eq("business_id", businessId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as unknown as VoiceSettings | null;
+}
+
+export async function updateVoiceSettings(id: string, input: Partial<VoiceSettings>) {
+  const { error } = await supabase
+    .from("voice_settings")
+    .update(input as never)
+    .eq("id", id);
+  if (error) throw error;
+}
 
 const APPOINTMENT_SELECT =
   "*, customer:customers(id,name,phone), service:services(id,name,price,duration_min)";

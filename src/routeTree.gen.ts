@@ -16,6 +16,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardCalendarRouteImport } from './routes/dashboard/calendar'
 import { Route as DashboardCustomersRouteImport } from './routes/dashboard/customers'
 import { Route as DashboardServicesRouteImport } from './routes/dashboard/services'
+import { Route as DashboardVoiceRouteImport } from './routes/dashboard/voice'
 import { Route as ApiPublicSmsSendConfirmationRouteImport } from './routes/api/public/sms/send-confirmation'
 import { Route as ApiPublicTwilioInboundRouteImport } from './routes/api/public/twilio/inbound'
 import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
@@ -56,6 +57,11 @@ const DashboardServicesRoute = DashboardServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardVoiceRoute = DashboardVoiceRouteImport.update({
+  id: '/voice',
+  path: '/voice',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApiPublicSmsSendConfirmationRoute =
   ApiPublicSmsSendConfirmationRouteImport.update({
     id: '/api/public/sms/send-confirmation',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/voice': typeof DashboardVoiceRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
   '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/voice': typeof DashboardVoiceRoute
   '/dashboard': typeof DashboardIndexRoute
   '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
   '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/dashboard/calendar': typeof DashboardCalendarRoute
   '/dashboard/customers': typeof DashboardCustomersRoute
   '/dashboard/services': typeof DashboardServicesRoute
+  '/dashboard/voice': typeof DashboardVoiceRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
   '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/dashboard/calendar'
     | '/dashboard/customers'
     | '/dashboard/services'
+    | '/dashboard/voice'
     | '/dashboard/'
     | '/api/public/sms/send-confirmation'
     | '/api/public/twilio/inbound'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/dashboard/calendar'
     | '/dashboard/customers'
     | '/dashboard/services'
+    | '/dashboard/voice'
     | '/dashboard'
     | '/api/public/sms/send-confirmation'
     | '/api/public/twilio/inbound'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/dashboard/calendar'
     | '/dashboard/customers'
     | '/dashboard/services'
+    | '/dashboard/voice'
     | '/dashboard/'
     | '/api/public/sms/send-confirmation'
     | '/api/public/twilio/inbound'
@@ -220,6 +232,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardServicesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/voice': {
+      id: '/dashboard/voice'
+      path: '/voice'
+      fullPath: '/dashboard/voice'
+      preLoaderRoute: typeof DashboardVoiceRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/api/public/sms/send-confirmation': {
       id: '/api/public/sms/send-confirmation'
       path: '/api/public/sms/send-confirmation'
@@ -255,6 +274,7 @@ interface DashboardRouteChildren {
   DashboardCalendarRoute: typeof DashboardCalendarRoute
   DashboardCustomersRoute: typeof DashboardCustomersRoute
   DashboardServicesRoute: typeof DashboardServicesRoute
+  DashboardVoiceRoute: typeof DashboardVoiceRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
@@ -262,6 +282,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardCalendarRoute: DashboardCalendarRoute,
   DashboardCustomersRoute: DashboardCustomersRoute,
   DashboardServicesRoute: DashboardServicesRoute,
+  DashboardVoiceRoute: DashboardVoiceRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }
 
