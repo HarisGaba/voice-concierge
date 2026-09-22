@@ -11,6 +11,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { buildConfirmationBody, sendTwilioMessage } from "@/lib/messaging.server";
 import { DAY_KEYS, getServerClient, json } from "@/lib/voice.server";
 
 const paramsSchema = z.object({
@@ -181,24 +182,72 @@ export const Route = createFileRoute("/api/public/vapi/webhook")({
         }
 
         // 7. Book it
-        const { error: bookError } = await db.from("appointments").insert({
-          business_id: business.id,
-          customer_id: customerId,
-          service_id: service.id,
-          start_time: start.toISOString(),
-          end_time: end.toISOString(),
-          status: "CONFIRMED",
-          payment_status: "UNPAID",
-          notes: "Booked by the voice receptionist.",
-        });
-        if (bookError) {
+        const { data: booking, error: bookError } = await db
+          .from("appointments")
+          .insert({
+            business_id: business.id,
+            customer_id: customerId,
+            service_id: service.id,
+            start_time: start.toISOString(),
+            end_time: end.toISOString(),
+            status: "CONFIRMED",
+            payment_status: "UNPAID",
+            notes: "Booked by the voice receptionist.",
+          })
+          .select("id")
+          .single();
+        if (bookError || !booking) {
           return json({ available: false, result: "The booking didn't save. Sorry about that." }, 500);
+        }
+
+        // 8. Confirmations by SMS and WhatsApp
+        const { data: voice } = await db
+          .from("voice_settings")
+          .select("send_sms,send_whatsapp")
+          .eq("business_id", business.id)
+          .maybeSingle();
+
+        const confirmationBody = buildConfirmationBody({
+          businessName: business.name as string,
+          customerName: p.customerName,
+          serviceName: service.name,
+          price: service.price,
+          startTime: start.toISOString(),
+          channel: "sms",
+        });
+
+        const notifications: Record<string, unknown> = {};
+        if (voice?.send_sms !== false) {
+          notifications["sms"] = await sendTwilioMessage({
+            channel: "sms",
+            to: p.customerPhone,
+            body: confirmationBody,
+          });
+        }
+        if (voice?.send_whatsapp !== false) {
+          const contentSid = process.env["TWILIO_WHATSAPP_CONTENT_SID"] ?? null;
+          notifications["whatsapp"] = await sendTwilioMessage({
+            channel: "whatsapp",
+            to: p.customerPhone,
+            body: confirmationBody,
+            contentSid,
+            contentVariables: contentSid
+              ? {
+                  "1": p.customerName,
+                  "2": service.name,
+                  "3": speakTime(start),
+                  "4": business.name as string,
+                }
+              : null,
+          });
         }
 
         return json({
           available: true,
           booked: true,
-          result: `Your appointment for ${service.name} is confirmed for ${speakTime(start)}. That's $${service.price}, and it takes about ${service.duration_min} minutes.`,
+          result: `Your appointment for ${service.name} is confirmed for ${speakTime(start)}. That's $${service.price}, and it takes about ${service.duration_min} minutes. I'm texting you a confirmation now.`,
+          appointmentId: booking.id,
+          notifications,
           appointment: {
             service: service.name,
             price: service.price,
