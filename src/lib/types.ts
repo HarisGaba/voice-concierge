@@ -51,4 +51,23 @@ export interface AppointmentWithRelations extends Appointment {
   service: Pick<Service, "id" | "name" | "price" | "duration_min"> | null;
 }
 
+export interface VoiceSettings {
+  id: string;
+  business_id: string;
+  agent_name: string;
+  greeting: string;
+  menu_intro: string;
+  closing: string;
+  voice_id: string;
+  language: string;
+  phone_number: string;
+  vapi_assistant_id: string;
+  retell_agent_id: string;
+  send_sms: boolean;
+  send_whatsapp: boolean;
+  last_synced_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;

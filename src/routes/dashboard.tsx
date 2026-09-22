@@ -1,5 +1,5 @@
 import { Link, Outlet, createFileRoute, useRouterState } from "@tanstack/react-router";
-import { CalendarDays, LayoutDashboard, PhoneCall, Users, Wrench } from "lucide-react";
+import { CalendarDays, LayoutDashboard, Mic, PhoneCall, Users, Wrench } from "lucide-react";
 
 import { Toaster } from "@/components/ui/sonner";
 import { useBusiness } from "@/hooks/use-receptionist";
@@ -14,6 +14,7 @@ const nav = [
   { to: "/dashboard/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/dashboard/services", label: "Services", icon: Wrench },
   { to: "/dashboard/customers", label: "Clients", icon: Users },
+  { to: "/dashboard/voice", label: "Voice agent", icon: Mic },
 ];
 
 function DashboardLayout() {
