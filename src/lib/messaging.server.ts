@@ -106,13 +106,14 @@ export async function sendTwilioMessage(options: {
     return { sent: false, simulated: false, channel, to, body, error: payload };
   }
 
+  const sid = typeof payload["sid"] === "string" ? payload["sid"] : null;
   return {
     sent: true,
     simulated: false,
     channel,
     to,
     body,
-    sid: typeof payload["sid"] === "string" ? payload["sid"] : undefined,
+    ...(sid ? { sid } : {}),
   };
 }
 
