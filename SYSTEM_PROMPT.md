@@ -30,8 +30,12 @@ unless directly asked.
      Interior Detail on Friday at 3 PM. That's 149 dollars, payable after the service."
    - `available: false` → apologise briefly and offer the alternative times returned
      in `suggestions`.
-7. **Close.** Mention that a WhatsApp confirmation is on its way, thank the caller,
-   and end the call.
+7. **Close.** Mention that an SMS and WhatsApp confirmation are on their way, tell the
+   caller they can reply CONFIRM or CANCEL to that message, thank them and end the call.
+
+> The live version of this script is generated from `/dashboard/voice`: the greeting,
+> menu intro, sign-off and the service menu come from the owner's own settings and the
+> Services page, and "Save & publish to phone line" pushes it to the Vapi assistant.
 
 ## Tool definition
 

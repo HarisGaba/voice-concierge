@@ -42,6 +42,7 @@ Schema changes are applied as SQL migrations in `supabase/migrations/` — there
 - `/dashboard/calendar` — day/week grid with a slot modal to add, reschedule, cancel, delete or block time
 - `/dashboard/services` — full CRUD for the service menu
 - `/dashboard/customers` — searchable client ledger with visits, lifetime spend, balance and payment recording
+- `/dashboard/voice` — voice agent studio: welcome message, spoken service menu, sign-off, voice pick, SMS/WhatsApp toggles, the live system prompt preview, and one-click publish to the Vapi assistant
 
 ## API
 
@@ -50,6 +51,26 @@ Schema changes are applied as SQL migrations in `supabase/migrations/` — there
 | `/api/public/vapi/webhook` | POST | Voice agent tool call: resolves the service, validates business hours, checks conflicts (returning alternative times), finds or creates the customer, books the appointment and returns a spoken confirmation string |
 | `/api/bookings` | GET, POST, PATCH, DELETE | REST operations used by the dashboard and any external client |
 | `/api/public/whatsapp/send-reminder` | POST | Sends a WhatsApp confirmation with CONFIRM / CANCEL options |
+| `/api/public/sms/send-confirmation` | POST | Sends the booking confirmation by SMS |
+| `/api/public/twilio/inbound` | POST | Twilio inbound webhook: handles CONFIRM / CANCEL replies and updates the booking, replying with TwiML |
+
+Every booking made through the voice webhook automatically fires the SMS and WhatsApp
+confirmations (each can be switched off on `/dashboard/voice`).
+
+### Environment variables
+
+| Name | Purpose |
+| --- | --- |
+| `VAPI_API_KEY` | Vapi private key; used to create/update the assistant from `/dashboard/voice` |
+| `TWILIO_API_KEY` | Set automatically when the Twilio connector is linked; routes sends through the Lovable connector gateway |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | Direct Twilio REST credentials (alternative to the connector) |
+| `TWILIO_SMS_FROM` | Twilio number used for SMS |
+| `TWILIO_WHATSAPP_FROM` | WhatsApp-enabled Twilio number |
+| `TWILIO_WHATSAPP_CONTENT_SID` | Optional approved Content template so CONFIRM / CANCEL render as tappable buttons |
+
+Without Twilio credentials, sends are simulated: the exact payload is returned so the flow
+can be demoed. Point your Twilio number's "A message comes in" webhook at
+`/api/public/twilio/inbound` to handle replies.
 
 `/api/public/*` routes are reachable without a session so external services can call them.
 
