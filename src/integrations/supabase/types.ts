@@ -83,7 +83,9 @@ export type Database = {
           email: string
           id: string
           name: string
+          owner_id: string | null
           phone: string
+          vertical: string
         }
         Insert: {
           address?: string
@@ -92,7 +94,9 @@ export type Database = {
           email?: string
           id?: string
           name: string
+          owner_id?: string | null
           phone?: string
+          vertical?: string
         }
         Update: {
           address?: string
@@ -101,12 +105,15 @@ export type Database = {
           email?: string
           id?: string
           name?: string
+          owner_id?: string | null
           phone?: string
+          vertical?: string
         }
         Relationships: []
       }
       customers: {
         Row: {
+          business_id: string | null
           created_at: string
           id: string
           name: string
@@ -115,6 +122,7 @@ export type Database = {
           phone: string
         }
         Insert: {
+          business_id?: string | null
           created_at?: string
           id?: string
           name: string
@@ -123,6 +131,7 @@ export type Database = {
           phone: string
         }
         Update: {
+          business_id?: string | null
           created_at?: string
           id?: string
           name?: string
@@ -130,7 +139,15 @@ export type Database = {
           pending_balance?: number
           phone?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       services: {
         Row: {
@@ -240,7 +257,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_demo_business: { Args: never; Returns: string }
+      owns_business: { Args: { _business_id: string }; Returns: boolean }
     }
     Enums: {
       appointment_status: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED"
