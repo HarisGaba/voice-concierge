@@ -19,7 +19,7 @@ import { useBusiness, useServices } from "@/hooks/use-receptionist";
 import { deleteService, upsertService } from "@/lib/db";
 import type { Service } from "@/lib/types";
 
-export const Route = createFileRoute("/dashboard/services")({
+export const Route = createFileRoute("/_authenticated/dashboard/services")({
   head: () => ({
     meta: [
       { title: "Services & Pricing | Ava Reception Dashboard" },

@@ -18,7 +18,7 @@ import { useAppointments, useBusiness, useCustomers } from "@/hooks/use-receptio
 import { settleBalance } from "@/lib/db";
 import type { Customer } from "@/lib/types";
 
-export const Route = createFileRoute("/dashboard/customers")({
+export const Route = createFileRoute("/_authenticated/dashboard/customers")({
   head: () => ({
     meta: [
       { title: "Client CRM & Ledger | Ava Reception Dashboard" },

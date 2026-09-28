@@ -33,7 +33,7 @@ import {
 import type { AppointmentStatus, AppointmentWithRelations } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/dashboard/calendar")({
+export const Route = createFileRoute("/_authenticated/dashboard/calendar")({
   head: () => ({
     meta: [
       { title: "Booking Calendar | Ava Reception Dashboard" },

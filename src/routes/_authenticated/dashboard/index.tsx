@@ -4,7 +4,7 @@ import { CalendarClock, DollarSign, Users, Wallet } from "lucide-react";
 import { PaymentBadge, StatusBadge } from "@/components/status-badge";
 import { useAppointments, useBusiness, useCustomers } from "@/hooks/use-receptionist";
 
-export const Route = createFileRoute("/dashboard/")({
+export const Route = createFileRoute("/_authenticated/dashboard/")({
   head: () => ({
     meta: [
       { title: "Today's Overview | Ava Reception Dashboard" },

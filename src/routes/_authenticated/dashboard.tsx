@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useBusiness } from "@/hooks/use-receptionist";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardLayout,
 });
 
