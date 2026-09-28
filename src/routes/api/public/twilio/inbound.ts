@@ -44,14 +44,14 @@ export const Route = createFileRoute("/api/public/twilio/inbound")({
         const { data: customer } = await db
           .from("customers")
           .select("id,name")
-          .eq("phone", from)
-          .maybeSingle();
-        if (!customer) return twiml("We couldn't find a booking for this number.");
+          .eq("phone", from);
+        const customerIds = (customer ?? []).map((c) => c.id);
+        if (!customerIds.length) return twiml("We couldn't find a booking for this number.");
 
         const { data: appointment } = await db
           .from("appointments")
           .select("id,start_time,status")
-          .eq("customer_id", customer.id)
+          .in("customer_id", customerIds)
           .gte("start_time", new Date().toISOString())
           .neq("status", "CANCELLED")
           .order("start_time", { ascending: true })

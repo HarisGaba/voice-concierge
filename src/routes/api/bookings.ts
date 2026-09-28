@@ -9,7 +9,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
-import { getServerClient, json } from "@/lib/voice.server";
+import { createClient } from "@supabase/supabase-js";
+
+import { json } from "@/lib/voice.server";
+
+/** Signed-in owner client: RLS limits every query to the caller's own business. */
+async function getOwnerClient(request: Request) {
+  const token = request.headers.get("authorization")?.replace(/^Bearer /, "");
+  if (!token) return null;
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+  const db = createClient(process.env["SUPABASE_URL"]!, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: { headers: { Authorization: `Bearer ${token}`, apikey: key } },
+  });
+  const { data, error } = await db.auth.getUser(token);
+  if (error || !data.user) return null;
+  return db;
+}
 
 const SELECT = "*, customer:customers(id,name,phone), service:services(id,name,price,duration_min)";
 
@@ -36,7 +52,8 @@ export const Route = createFileRoute("/api/bookings")({
         const to =
           url.searchParams.get("to") ??
           new Date(new Date(from).getTime() + 86_400_000).toISOString();
-        const db = getServerClient();
+        const db = await getOwnerClient(request);
+        if (!db) return json({ error: "Unauthorized" }, 401);
         const { data, error } = await db
           .from("appointments")
           .select(SELECT)
@@ -51,7 +68,8 @@ export const Route = createFileRoute("/api/bookings")({
         const parsed = createSchema.safeParse(await request.json().catch(() => null));
         if (!parsed.success) return json({ error: parsed.error.flatten() }, 400);
         const b = parsed.data;
-        const db = getServerClient();
+        const db = await getOwnerClient(request);
+        if (!db) return json({ error: "Unauthorized" }, 401);
         const { data, error } = await db
           .from("appointments")
           .insert({
@@ -83,7 +101,8 @@ export const Route = createFileRoute("/api/bookings")({
         if (b.paymentStatus) update["payment_status"] = b.paymentStatus;
         if (b.notes !== undefined) update["notes"] = b.notes;
 
-        const db = getServerClient();
+        const db = await getOwnerClient(request);
+        if (!db) return json({ error: "Unauthorized" }, 401);
         const { data, error } = await db
           .from("appointments")
           .update(update)
@@ -97,7 +116,8 @@ export const Route = createFileRoute("/api/bookings")({
       DELETE: async ({ request }) => {
         const id = new URL(request.url).searchParams.get("id");
         if (!id) return json({ error: "id query param is required" }, 400);
-        const db = getServerClient();
+        const db = await getOwnerClient(request);
+        if (!db) return json({ error: "Unauthorized" }, 401);
         const { error } = await db.from("appointments").delete().eq("id", id);
         if (error) return json({ error: error.message }, 500);
         return json({ deleted: true });
