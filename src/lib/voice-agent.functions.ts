@@ -6,6 +6,7 @@
  * assistant in the connected Vapi account.
  */
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 
@@ -74,15 +75,15 @@ function baseUrl() {
 }
 
 export const syncVoiceAgent = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => syncSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const apiKey = process.env["VAPI_API_KEY"];
     if (!apiKey) {
       return { ok: false as const, error: "No Vapi API key is configured yet." };
     }
 
-    const { getServerClient } = await import("@/lib/voice.server");
-    const db = getServerClient();
+    const db = context.supabase;
 
     const { data: business } = await db
       .from("businesses")
@@ -111,7 +112,7 @@ export const syncVoiceAgent = createServerFn({ method: "POST" })
       closing: settings.closing as string,
     });
 
-    const webhookUrl = `${baseUrl()}/api/public/vapi/webhook`;
+    const webhookUrl = `${baseUrl()}/api/public/vapi/webhook?businessId=${data.businessId}`;
 
     const payload = {
       name: `${business.name} — ${settings.agent_name}`,
@@ -183,10 +184,10 @@ export const syncVoiceAgent = createServerFn({ method: "POST" })
   });
 
 export const previewVoicePrompt = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => syncSchema.parse(input))
-  .handler(async ({ data }) => {
-    const { getServerClient } = await import("@/lib/voice.server");
-    const db = getServerClient();
+  .handler(async ({ data, context }) => {
+    const db = context.supabase;
     const { data: business } = await db
       .from("businesses")
       .select("*")
@@ -211,6 +212,6 @@ export const previewVoicePrompt = createServerFn({ method: "POST" })
         menuIntro: settings.menu_intro as string,
         closing: settings.closing as string,
       }),
-      webhookUrl: `${baseUrl()}/api/public/vapi/webhook`,
+      webhookUrl: `${baseUrl()}/api/public/vapi/webhook?businessId=${data.businessId}`,
     };
   });

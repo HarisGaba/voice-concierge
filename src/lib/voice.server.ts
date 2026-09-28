@@ -1,17 +1,12 @@
 /**
- * Server-side database access for public API routes (voice webhook, bookings REST,
- * WhatsApp reminders). Uses the publishable key — the demo tables allow anon access.
+ * Server-side database access for external webhooks (voice, Twilio).
+ * These callers have no user session, so they use the privileged server client
+ * and must always scope queries to a single business themselves.
  */
-import { createClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export function getServerClient() {
-  const url = process.env["VITE_SUPABASE_URL"] ?? import.meta.env["VITE_SUPABASE_URL"];
-  const key =
-    process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ??
-    import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
-  return createClient(url as string, key as string, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  return supabaseAdmin;
 }
 
 export const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
