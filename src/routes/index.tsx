@@ -1,7 +1,10 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { CalendarCheck, MessageSquare, PhoneCall, Wallet } from "lucide-react";
 
+import { useEffect, useState } from "react";
+
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,6 +52,12 @@ const features = [
 ];
 
 function Landing() {
+  const [signedIn, setSignedIn] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSignedIn(Boolean(data.session)));
+    const { data } = supabase.auth.onAuthStateChange((_e, session) => setSignedIn(Boolean(session)));
+    return () => data.subscription.unsubscribe();
+  }, []);
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6">
@@ -59,7 +68,7 @@ function Landing() {
           <span className="font-display font-semibold">Ava Reception</span>
         </div>
         <Button asChild size="sm">
-          <Link to="/dashboard">Open dashboard</Link>
+          {signedIn ? <Link to="/dashboard">Open dashboard</Link> : <Link to="/auth">Sign in</Link>}
         </Button>
       </header>
 
@@ -77,10 +86,10 @@ function Landing() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <Link to="/dashboard">See the live dashboard</Link>
+              <Link to={signedIn ? "/dashboard" : "/auth"}>{signedIn ? "Open your dashboard" : "Start free — create account"}</Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/dashboard/calendar">View the calendar</Link>
+              <Link to="/auth">Sign in</Link>
             </Button>
           </div>
         </div>
