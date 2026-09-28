@@ -10,13 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as ApiBookingsRouteImport } from './routes/api/bookings'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as DashboardCalendarRouteImport } from './routes/dashboard/calendar'
-import { Route as DashboardCustomersRouteImport } from './routes/dashboard/customers'
-import { Route as DashboardServicesRouteImport } from './routes/dashboard/services'
-import { Route as DashboardVoiceRouteImport } from './routes/dashboard/voice'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedDashboardCalendarRouteImport } from './routes/_authenticated/dashboard/calendar'
+import { Route as AuthenticatedDashboardCustomersRouteImport } from './routes/_authenticated/dashboard/customers'
+import { Route as AuthenticatedDashboardServicesRouteImport } from './routes/_authenticated/dashboard/services'
+import { Route as AuthenticatedDashboardVoiceRouteImport } from './routes/_authenticated/dashboard/voice'
 import { Route as ApiPublicSmsSendConfirmationRouteImport } from './routes/api/public/sms/send-confirmation'
 import { Route as ApiPublicTwilioInboundRouteImport } from './routes/api/public/twilio/inbound'
 import { Route as ApiPublicVapiWebhookRouteImport } from './routes/api/public/vapi/webhook'
@@ -27,41 +31,65 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiBookingsRoute = ApiBookingsRouteImport.update({
   id: '/api/bookings',
   path: '/api/bookings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardCalendarRoute = DashboardCalendarRouteImport.update({
-  id: '/calendar',
-  path: '/calendar',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardCustomersRoute = DashboardCustomersRouteImport.update({
-  id: '/customers',
-  path: '/customers',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardServicesRoute = DashboardServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => DashboardRoute,
-} as any)
-const DashboardVoiceRoute = DashboardVoiceRouteImport.update({
-  id: '/voice',
-  path: '/voice',
-  getParentRoute: () => DashboardRoute,
-} as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardCalendarRoute =
+  AuthenticatedDashboardCalendarRouteImport.update({
+    id: '/calendar',
+    path: '/calendar',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardCustomersRoute =
+  AuthenticatedDashboardCustomersRouteImport.update({
+    id: '/customers',
+    path: '/customers',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardServicesRoute =
+  AuthenticatedDashboardServicesRouteImport.update({
+    id: '/services',
+    path: '/services',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardVoiceRoute =
+  AuthenticatedDashboardVoiceRouteImport.update({
+    id: '/voice',
+    path: '/voice',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const ApiPublicSmsSendConfirmationRoute =
   ApiPublicSmsSendConfirmationRouteImport.update({
     id: '/api/public/sms/send-confirmation',
@@ -87,13 +115,16 @@ const ApiPublicWhatsappSendReminderRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/bookings': typeof ApiBookingsRoute
-  '/dashboard/calendar': typeof DashboardCalendarRoute
-  '/dashboard/customers': typeof DashboardCustomersRoute
-  '/dashboard/services': typeof DashboardServicesRoute
-  '/dashboard/voice': typeof DashboardVoiceRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/calendar': typeof AuthenticatedDashboardCalendarRoute
+  '/dashboard/customers': typeof AuthenticatedDashboardCustomersRoute
+  '/dashboard/services': typeof AuthenticatedDashboardServicesRoute
+  '/dashboard/voice': typeof AuthenticatedDashboardVoiceRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
   '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
@@ -101,12 +132,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/bookings': typeof ApiBookingsRoute
-  '/dashboard/calendar': typeof DashboardCalendarRoute
-  '/dashboard/customers': typeof DashboardCustomersRoute
-  '/dashboard/services': typeof DashboardServicesRoute
-  '/dashboard/voice': typeof DashboardVoiceRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/calendar': typeof AuthenticatedDashboardCalendarRoute
+  '/dashboard/customers': typeof AuthenticatedDashboardCustomersRoute
+  '/dashboard/services': typeof AuthenticatedDashboardServicesRoute
+  '/dashboard/voice': typeof AuthenticatedDashboardVoiceRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
   '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
@@ -115,13 +149,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/api/bookings': typeof ApiBookingsRoute
-  '/dashboard/calendar': typeof DashboardCalendarRoute
-  '/dashboard/customers': typeof DashboardCustomersRoute
-  '/dashboard/services': typeof DashboardServicesRoute
-  '/dashboard/voice': typeof DashboardVoiceRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/_authenticated/dashboard/calendar': typeof AuthenticatedDashboardCalendarRoute
+  '/_authenticated/dashboard/customers': typeof AuthenticatedDashboardCustomersRoute
+  '/_authenticated/dashboard/services': typeof AuthenticatedDashboardServicesRoute
+  '/_authenticated/dashboard/voice': typeof AuthenticatedDashboardVoiceRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/api/public/sms/send-confirmation': typeof ApiPublicSmsSendConfirmationRoute
   '/api/public/twilio/inbound': typeof ApiPublicTwilioInboundRoute
   '/api/public/vapi/webhook': typeof ApiPublicVapiWebhookRoute
@@ -131,7 +169,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
+    | '/reset-password'
     | '/dashboard'
+    | '/onboarding'
     | '/api/bookings'
     | '/dashboard/calendar'
     | '/dashboard/customers'
@@ -145,6 +186,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/onboarding'
     | '/api/bookings'
     | '/dashboard/calendar'
     | '/dashboard/customers'
@@ -158,13 +202,17 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/onboarding'
     | '/api/bookings'
-    | '/dashboard/calendar'
-    | '/dashboard/customers'
-    | '/dashboard/services'
-    | '/dashboard/voice'
-    | '/dashboard/'
+    | '/_authenticated/dashboard/calendar'
+    | '/_authenticated/dashboard/customers'
+    | '/_authenticated/dashboard/services'
+    | '/_authenticated/dashboard/voice'
+    | '/_authenticated/dashboard/'
     | '/api/public/sms/send-confirmation'
     | '/api/public/twilio/inbound'
     | '/api/public/vapi/webhook'
@@ -173,7 +221,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ApiBookingsRoute: typeof ApiBookingsRoute
   ApiPublicSmsSendConfirmationRoute: typeof ApiPublicSmsSendConfirmationRoute
   ApiPublicTwilioInboundRoute: typeof ApiPublicTwilioInboundRoute
@@ -190,12 +240,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/bookings': {
       id: '/api/bookings'
@@ -204,40 +282,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBookingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
       path: '/'
       fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
-    '/dashboard/calendar': {
-      id: '/dashboard/calendar'
+    '/_authenticated/dashboard/calendar': {
+      id: '/_authenticated/dashboard/calendar'
       path: '/calendar'
       fullPath: '/dashboard/calendar'
-      preLoaderRoute: typeof DashboardCalendarRouteImport
-      parentRoute: typeof DashboardRoute
+      preLoaderRoute: typeof AuthenticatedDashboardCalendarRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
-    '/dashboard/customers': {
-      id: '/dashboard/customers'
+    '/_authenticated/dashboard/customers': {
+      id: '/_authenticated/dashboard/customers'
       path: '/customers'
       fullPath: '/dashboard/customers'
-      preLoaderRoute: typeof DashboardCustomersRouteImport
-      parentRoute: typeof DashboardRoute
+      preLoaderRoute: typeof AuthenticatedDashboardCustomersRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
-    '/dashboard/services': {
-      id: '/dashboard/services'
+    '/_authenticated/dashboard/services': {
+      id: '/_authenticated/dashboard/services'
       path: '/services'
       fullPath: '/dashboard/services'
-      preLoaderRoute: typeof DashboardServicesRouteImport
-      parentRoute: typeof DashboardRoute
+      preLoaderRoute: typeof AuthenticatedDashboardServicesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
-    '/dashboard/voice': {
-      id: '/dashboard/voice'
+    '/_authenticated/dashboard/voice': {
+      id: '/_authenticated/dashboard/voice'
       path: '/voice'
       fullPath: '/dashboard/voice'
-      preLoaderRoute: typeof DashboardVoiceRouteImport
-      parentRoute: typeof DashboardRoute
+      preLoaderRoute: typeof AuthenticatedDashboardVoiceRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/api/public/sms/send-confirmation': {
       id: '/api/public/sms/send-confirmation'
@@ -270,29 +348,46 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface DashboardRouteChildren {
-  DashboardCalendarRoute: typeof DashboardCalendarRoute
-  DashboardCustomersRoute: typeof DashboardCustomersRoute
-  DashboardServicesRoute: typeof DashboardServicesRoute
-  DashboardVoiceRoute: typeof DashboardVoiceRoute
-  DashboardIndexRoute: typeof DashboardIndexRoute
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardCalendarRoute: typeof AuthenticatedDashboardCalendarRoute
+  AuthenticatedDashboardCustomersRoute: typeof AuthenticatedDashboardCustomersRoute
+  AuthenticatedDashboardServicesRoute: typeof AuthenticatedDashboardServicesRoute
+  AuthenticatedDashboardVoiceRoute: typeof AuthenticatedDashboardVoiceRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardCalendarRoute: DashboardCalendarRoute,
-  DashboardCustomersRoute: DashboardCustomersRoute,
-  DashboardServicesRoute: DashboardServicesRoute,
-  DashboardVoiceRoute: DashboardVoiceRoute,
-  DashboardIndexRoute: DashboardIndexRoute,
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardCalendarRoute: AuthenticatedDashboardCalendarRoute,
+    AuthenticatedDashboardCustomersRoute: AuthenticatedDashboardCustomersRoute,
+    AuthenticatedDashboardServicesRoute: AuthenticatedDashboardServicesRoute,
+    AuthenticatedDashboardVoiceRoute: AuthenticatedDashboardVoiceRoute,
+    AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
 }
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
-)
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ApiBookingsRoute: ApiBookingsRoute,
   ApiPublicSmsSendConfirmationRoute: ApiPublicSmsSendConfirmationRoute,
   ApiPublicTwilioInboundRoute: ApiPublicTwilioInboundRoute,

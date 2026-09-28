@@ -15,7 +15,7 @@ import { getVoiceSettings, updateVoiceSettings } from "@/lib/db";
 import { previewVoicePrompt, syncVoiceAgent } from "@/lib/voice-agent.functions";
 import type { VoiceSettings } from "@/lib/types";
 
-export const Route = createFileRoute("/dashboard/voice")({
+export const Route = createFileRoute("/_authenticated/dashboard/voice")({
   component: VoicePage,
   head: () => ({
     meta: [

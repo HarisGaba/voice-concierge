@@ -71,11 +71,27 @@ export const Route = createFileRoute("/api/public/vapi/webhook")({
         const db = getServerClient();
 
         // 1. Business + hours
+        const businessIdParam = new URL(request.url).searchParams.get("businessId");
+        const call = (raw["message"] as Record<string, unknown> | undefined)?.["call"] as
+          | Record<string, unknown>
+          | undefined;
+        const assistantId = (call?.["assistantId"] as string | undefined) ?? null;
+        let businessId = businessIdParam;
+        if (!businessId && assistantId) {
+          const { data: vs } = await db
+            .from("voice_settings")
+            .select("business_id")
+            .eq("vapi_assistant_id", assistantId)
+            .maybeSingle();
+          businessId = vs?.business_id ?? null;
+        }
+        if (!businessId) {
+          return json({ available: false, result: "This line isn't linked to a business yet." }, 404);
+        }
         const { data: business } = await db
           .from("businesses")
           .select("*")
-          .order("created_at", { ascending: true })
-          .limit(1)
+          .eq("id", businessId)
           .maybeSingle();
         if (!business) return json({ available: false, result: "No business configured." }, 404);
 
@@ -168,13 +184,14 @@ export const Route = createFileRoute("/api/public/vapi/webhook")({
         const { data: existing } = await db
           .from("customers")
           .select("*")
+          .eq("business_id", business.id)
           .eq("phone", p.customerPhone)
           .maybeSingle();
         let customerId = existing?.id;
         if (!customerId) {
           const { data: created, error } = await db
             .from("customers")
-            .insert({ name: p.customerName, phone: p.customerPhone })
+            .insert({ business_id: business.id, name: p.customerName, phone: p.customerPhone })
             .select("id")
             .single();
           if (error) return json({ available: false, result: "Couldn't save your details." }, 500);
