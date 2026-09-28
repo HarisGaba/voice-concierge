@@ -1,5 +1,9 @@
-import { Link, Outlet, createFileRoute, useRouterState } from "@tanstack/react-router";
-import { CalendarDays, LayoutDashboard, Mic, PhoneCall, Users, Wrench } from "lucide-react";
+import { Link, Outlet, createFileRoute, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { CalendarDays, LayoutDashboard, LogOut, Mic, PhoneCall, Users, Wrench } from "lucide-react";
+
+import { supabase } from "@/integrations/supabase/client";
 
 import { Toaster } from "@/components/ui/sonner";
 import { useBusiness } from "@/hooks/use-receptionist";
@@ -18,7 +22,21 @@ const nav = [
 ];
 
 function DashboardLayout() {
-  const { data: business } = useBusiness();
+  const { data: business, isSuccess } = useBusiness();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (isSuccess && !business) navigate({ to: "/onboarding", replace: true });
+  }, [isSuccess, business, navigate]);
+
+  async function signOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/auth", replace: true });
+  }
+
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -59,8 +77,14 @@ function DashboardLayout() {
 
         <div className="panel mt-auto p-3 text-xs text-muted-foreground">
           <p className="font-medium text-foreground">Voice line live</p>
-          <p className="mt-1">{business?.phone ?? "—"}</p>
+          <p className="mt-1">{business?.phone || "—"}</p>
         </div>
+        <button
+          onClick={signOut}
+          className="mt-3 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+        >
+          <LogOut className="size-4" /> Sign out
+        </button>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -74,6 +98,9 @@ function DashboardLayout() {
               {item.label}
             </Link>
           ))}
+          <button onClick={signOut} className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+            Sign out
+          </button>
         </header>
         <main className="flex-1 p-4 md:p-8">
           <Outlet />
