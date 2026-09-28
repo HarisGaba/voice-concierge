@@ -35,15 +35,38 @@ export async function updateVoiceSettings(id: string, input: Partial<VoiceSettin
 const APPOINTMENT_SELECT =
   "*, customer:customers(id,name,phone), service:services(id,name,price,duration_min)";
 
-export async function getBusiness(): Promise<Business> {
-  const { data, error } = await supabase
-    .from("businesses")
-    .select("*")
-    .order("created_at", { ascending: true })
-    .limit(1)
-    .single();
+/** The signed-in owner's business (RLS returns only their own), or null before onboarding. */
+export async function getBusiness(): Promise<Business | null> {
+  const { data, error } = await supabase.from("businesses").select("*").maybeSingle();
   if (error) throw error;
-  return data as unknown as Business;
+  return (data ?? null) as unknown as Business | null;
+}
+
+export async function createBusiness(input: {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  vertical: string;
+  business_hours: Record<string, { open: string; close: string } | null>;
+  services: { name: string; price: number; duration_min: number; description: string }[];
+}): Promise<string> {
+  const { services, ...biz } = input;
+  const { data, error } = await supabase.from("businesses").insert(biz as never).select("id").single();
+  if (error) throw error;
+  if (services.length) {
+    const { error: sErr } = await supabase
+      .from("services")
+      .insert(services.map((s) => ({ ...s, business_id: data.id })));
+    if (sErr) throw sErr;
+  }
+  return data.id;
+}
+
+export async function claimDemoBusiness(): Promise<string | null> {
+  const { data, error } = await supabase.rpc("claim_demo_business" as never);
+  if (error) throw error;
+  return (data as unknown as string | null) ?? null;
 }
 
 export async function listServices(businessId: string): Promise<Service[]> {
@@ -154,16 +177,21 @@ export async function deleteAppointment(id: string) {
   if (error) throw error;
 }
 
-export async function findOrCreateCustomer(name: string, phone: string): Promise<Customer> {
+export async function findOrCreateCustomer(
+  businessId: string,
+  name: string,
+  phone: string,
+): Promise<Customer> {
   const { data: existing } = await supabase
     .from("customers")
     .select("*")
+    .eq("business_id", businessId)
     .eq("phone", phone)
     .maybeSingle();
   if (existing) return existing as unknown as Customer;
   const { data, error } = await supabase
     .from("customers")
-    .insert({ name, phone })
+    .insert({ business_id: businessId, name, phone })
     .select("*")
     .single();
   if (error) throw error;

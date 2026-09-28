@@ -117,6 +117,7 @@ function CalendarPage() {
       let customerId: string | null = null;
       if (!d.blocked && d.customerPhone.trim()) {
         const customer = await findOrCreateCustomer(
+          business.id,
           d.customerName.trim() || "Walk-in",
           d.customerPhone.trim(),
         );
