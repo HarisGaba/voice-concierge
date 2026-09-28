@@ -71,7 +71,7 @@ export const Route = createFileRoute("/api/public/twilio/inbound")({
         });
         return twiml(
           intent === "CONFIRM"
-            ? `Thanks ${customer.name}! Your appointment on ${when} is confirmed. See you then.`
+            ? `Thanks ${customer![0]!.name}! Your appointment on ${when} is confirmed. See you then.`
             : `No problem — your appointment on ${when} has been cancelled. Call us any time to rebook.`,
         );
       },
